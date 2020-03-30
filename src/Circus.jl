@@ -1,5 +1,7 @@
 module Circus
 
-greet() = print("Hello World!")
+include("auxfunctions.jl")
+
+include("method.jl")
 
 end # module
