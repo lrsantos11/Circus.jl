@@ -1,7 +1,7 @@
 using LinearAlgebra
 using SparseArrays
 using MathProgBase
-using GLPKMathProgInterface
+using Clp
 
 """
     ratiotest(x, A, b, d)
@@ -115,7 +115,7 @@ subject to bl ≤ A x ≤ bu
 """
 
 function mpstomatrix(mpsfile::String)
-    lp_model = MathProgBase.LinearQuadraticModel(GLPKSolverLP())
+    lp_model = MathProgBase.LinearQuadraticModel(ClpSolver())
     # Load the model from .MPS file
     MathProgBase.loadproblem!(lp_model, mpsfile)
     # Transform in vectors

@@ -1,5 +1,5 @@
 include("../src/methods.jl")
-#
+
 function test_circussimplex()
     # Needs to make MPS available
     # @testset "Test with MPS" begin
