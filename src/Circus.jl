@@ -2,6 +2,6 @@ module Circus
 
 include("auxfunctions.jl")
 
-include("method.jl")
+include("methods.jl")
 
 end # module

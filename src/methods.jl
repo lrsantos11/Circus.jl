@@ -1,33 +1,34 @@
-export blslp, circumsimplex
+export circus, circumsimplex
 
 include("auxfunctions.jl")
 
 """
-    blslp(c, A, l, u, xl, xu; atol = 1e-5, max_iter = 10000)
+    circus(c, A, l, u, xl, xu; atol = 1e-5, max_iter = 10000)
 Solve the linear program problem on the form
            min  dot(c, x)
            subject to l ≤ A x ≤ u
                       xl ≤ x ≤ xu
 where `A` is m × n. `atol` is the tolerance and `max_iter` is the
-maximum number of iterations.
+maximum number of iterations using the Circus Method.
 """
 
-function blslp(c, A, l, u, xl, xu; atol = 1e-5, max_iter = 10000)
+function circus(c, A, l, u, xl, xu; atol = 1e-5, max_iter = 10000)
     b= [u; -l; xu; -xl]
     AA = [A; -A; I; -I]
-    return blslp(c, AA, b, atol = atol, max_iter = max_iter)
+    return circus(c, AA, b, atol = atol, max_iter = max_iter)
 end
 
 """
-    blslp(c, A, b, xu; atol = 1e-5, max_iter = 10000)
+    circus(c, A, b, xu; atol = 1e-5, max_iter = 10000)
 Solve the linear program problem on the form
            min  dot(c, x)
            subject to   A x = b
                       0 ≤ x ≤ xuthrow(ErrorException("test"))
 where `A` is m × n. `atol` is the tolerance and `max_iter` is the
-maximum number of iterations.
+maximum number of iterations using the Circus Method.
 """
-function blslp(c, A, b, xu; atol = 1e-5, max_iter = 10000)
+
+function circus(c, A, b, xu; atol = 1e-5, max_iter = 10000)
     # Including slacks
     index_slacks =  findall(xu .!=  Inf)
     num_slacks = length(index_slacks)
@@ -39,19 +40,19 @@ function blslp(c, A, b, xu; atol = 1e-5, max_iter = 10000)
     # Computes Solution for the dual
     # min dot(-[b; xu],[y; w])
     # subject to   AA^T[y; w  ≦ [c;0]
-    return blslp(-bb, Matrix(AA'), cc, atol = atol, max_iter = max_iter)
+    return circus(-bb, Matrix(AA'), cc, atol = atol, max_iter = max_iter)
 end
 
 """
-    blslp(c, A, b; atol = 1e-5, max_iter = 10000)
+    circus(c, A, b; atol = 1e-5, max_iter = 10000)
 Solve the linear program problem on the form
            min  dot(c, x)
     subject to  A x ≦ b
 where `A` is m × n. `atol` is the tolerance and `max_iter` is the
-maximum number of iterations
+maximum number of iterations  using the Circus Method.
 """
 
-function blslp(c, A, b; atol = 1e-8, max_iter = 10000)
+function circus(c, A, b; atol = 1e-8, max_iter = 10000)
     # @assert all(b .> zero(T))
 
     # Set up data structures.
@@ -79,7 +80,7 @@ function blslp(c, A, b; atol = 1e-8, max_iter = 10000)
     # min_ratio = ratiotest(x, A, b, d)
     # Taking the step
     # x += min_ratio*d
-    # Begin blslp iterations.
+    # Begin circus iterations.
     status = :MaxIter
 
     iter = 0
@@ -128,10 +129,10 @@ Solve the linear program problem on the form
            min  dot(c, x)
     subject to  A x ≦ b
 where `A` is m × n. `atol` is the tolerance and `max_iter` is the
-maximum number of iterations
+maximum number of iterations using the accelerated Simplex by Circus.
 """
 
-function circumsimplex(c, A, b; xzero = Float64[], atol = 1e-8, max_iter = 10000)
+function circussimplex(c, A, b; xzero = Float64[], atol = 1e-8, max_iter = 10000)
     # @assert all(b .> zero(T))
 
     # Set up data structures.
