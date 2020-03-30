@@ -1,6 +1,9 @@
-using Circus
+# using Circus
 using Test
+using GLPKMathProgInterface
+using JuMP
+using LinearAlgebra
+using SparseArrays
+using GLPK
 
-@testset "Circus.jl" begin
-    # Write your own tests here.
-end
+include("test_Circus.jl")

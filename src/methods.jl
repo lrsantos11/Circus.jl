@@ -1,4 +1,4 @@
-export circus, circumsimplex
+export circus, circussimplex
 
 include("auxfunctions.jl")
 

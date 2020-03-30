@@ -259,7 +259,7 @@ On the linear convergence of the circumcentered-reflection method. Oper. Res. Le
             end
         end
         # Can we make this solution faster, or better?
-        y = G\b
+        y = cholesky(G)\b
         CC = X[1]
         for ind in 1:dimG
             CC += .5*y[ind]*V[ind]
