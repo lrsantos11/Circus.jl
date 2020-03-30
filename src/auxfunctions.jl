@@ -28,7 +28,7 @@ end
 
 """
     barydirection(x, A, b, d)
-Finds Barycenteric direction
+Finds Barycentric direction
 
 """
 function barydirection(x, A, b, Anormed,cnormed)
@@ -43,6 +43,7 @@ function barydirection(x, A, b, Anormed,cnormed)
     d /= -cardJp1
     return d
 end
+
 """
     finddirection(x, A, b, Anormed,cnormed)
 Finds Barycenteric direction
@@ -107,7 +108,7 @@ end
 
 """
 mpstomatrix(mpsfile::String)
-The GLPK solver is used to convert the MPS file to a problem withthe matrix form
+The GLPK solver is used to convert the MPS file to a problem with the matrix form
        min  dot(c, x)
 subject to bl ≤ A x ≤ bu
            0 ≤ x ≤ xu
@@ -213,48 +214,55 @@ function LPtoSTDFormat(c,A,l,u,xlb,xub)
     return nrow,ncol,c,A,b,xlb,xub
 end
 
-# """
-# FindCircumcentermSet(X)
-#
-# Finds the Circumcenter of vectors ``x_0,x_1,…,x_m``, columns of matrix ``X``,
-# as described in [^Behling2018].
-#
-# [^Behling2018]: Behling, R., Bello Cruz, J.Y., Santos, L.-R.: Circumcentering the Douglas–Rachford method. Numer. Algorithms. 78, 759–776 (2018). [doi:10.1007/s11075-017-0399-5](https://doi.org/10.1007/s11075-017-0399-5)
-#
-# """
-#     function FindCircumcentermSet(X)
-#     # Finds the Circumcenter of points X = x0, x1, x2
-#         # println(typeof(X))
-#         lengthX = size(X)[2]
-#         if lengthX  == 1
-#             return X
-#         elseif lengthX == 2
-#             return .5*(X[:,1] + X[:,2])
-#         end
-#         V = X[:,2:end] #hcat([x for x in Iterators.drop(X,1)]...)
-#         V .-= X[:,1]
-#         b = Float64[]
-#         for J = 1:lengthX-1
-#             push!(b,0.5*dot(V[:,J],V[:,J]))
-#         end
-#         # rankM = rank(V')
-#         # if rankM < lengthX-1
-#         #  warn("Rank deficient matrix")
-#         # end
-#         # @show cond(full(V))
-#         # println(M)
-#         # open("MatrixCond","a") do f
-#         #    # do stuff with the open file
-#         #   str = @sprintf("Matrix Cond %10.8f\n",MCond)
-#         #   print(f,str)
-#         # end
-#         # println(MCond)
-#         if isposdef(V'*V)
-#             L = cholesky(V'*V)
-#             y = L\b
-#             r = V*y
-#         else
-#             r = V'\b
-#         end
-#         return X[:,1]+r
-#     end
+
+"""
+FindCircumcentermSet(X)
+
+Finds the Circumcenter of vectors ``x_0,x_1,…,x_m``, columns of matrix ``X``,
+as described in [^Behling2018a] and [^Behling2018b].
+
+[^Behling2018]: Behling, R., Bello Cruz, J.Y., Santos, L.-R.: 
+Circumcentering the Douglas–Rachford method. Numer. Algorithms. 78(3), 759–776 (2018). 
+[doi:10.1007/s11075-017-0399-5](https://doi.org/10.1007/s11075-017-0399-5)
+[^Behling2018]: Behling, R., Bello Cruz, J.Y., Santos, L.-R.: 
+On the linear convergence of the circumcentered-reflection method. Oper. Res. Lett. 46(2), 159-162 (2018). 
+[doi:10.1016/j.orl.2017.11.018](https://doi.org/10.1016/j.orl.2017.11.018)
+
+"""
+    function FindCircumcentermSet(X)
+    # Finds the Circumcenter of points X = [X1, X2, X3, ... Xn]
+        # println(typeof(X))
+        lengthX = length(X)
+        if lengthX  == 1
+            return X[1]
+        elseif lengthX == 2
+            return .5*(X[1] + X[2])
+        end
+        V = []
+        b = Float64[]
+        # Forms V = [X[2] - X[1] ... X[n]-X[1]]
+        # and b = [dot(V[1],V[1]) ... dot(V[n-1],V[n-1])]
+        for ind in 2:lengthX
+            difXnX1 = X[ind]-X[1]
+            push!(V,difXnX1)
+            push!(b,dot(difXnX1,difXnX1))
+        end
+
+       # Forms Gram Matrix
+        dimG = lengthX-1
+        G = diagm(b)
+
+        for irow in 1:(dimG-1)
+            for icol in  (irow+1):dimG
+                G[irow,icol] = dot(V[irow],V[icol])
+                G[icol,irow] = G[irow,icol]
+            end
+        end
+        # Can we make this solution faster, or better?
+        y = G\b
+        CC = X[1]
+        for ind in 1:dimG
+            CC += .5*y[ind]*V[ind]
+        end
+        return CC
+    end
