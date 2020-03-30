@@ -1,6 +1,6 @@
 name = "Circus"
 uuid = "e1f17670-9e8c-4d1f-b9ce-7ab5ca400c46"
-authors = ["[\"Roger Behling\"", "\"Yunier Bello-Cruz\"", "\"Luiz-Rafael Santos\"", "\"Hugo Lara Urdaneta\"", "\"Davi Sales Barreira\"]"]
+authors = ["Roger Behling", "Yunier Bello-Cruz", "Luiz-Rafael Santos", "Hugo Lara Urdaneta", "Davi Sales Barreira"]
 version = "0.1.0"
 
 [compat]
