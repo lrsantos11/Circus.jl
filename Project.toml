@@ -1,0 +1,13 @@
+name = "Circus"
+uuid = "e1f17670-9e8c-4d1f-b9ce-7ab5ca400c46"
+authors = ["[\"Roger Behling\"", "\"Yunier Bello-Cruz\"", "\"Luiz-Rafael Santos\"", "\"Hugo Lara Urdaneta\"", "\"Davi Sales Barreira\"]"]
+version = "0.1.0"
+
+[compat]
+julia = "1.3"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
