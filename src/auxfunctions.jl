@@ -75,13 +75,13 @@ Refine solution when near the LP solution
 
 """
 function refinesolution(x, A, b, c, num_var, atol)
-    index_active = findall((b - A*x) .<  1e-8)
+    index_active = findall(b - A*x .<  1e-8)
     num_active = length(index_active)
     iter = 0
     if iszero(num_active)
         alpha = ratiotest(x,A,b,-c)
         x = x - alpha*c
-        index_active = findall((b - A*x).<= 1e-8)
+        index_active = findall(b - A*x.<= 1e-8)
         num_active = length(index_active)
     end
     while num_active < num_var && iter <= num_var
@@ -98,7 +98,7 @@ function refinesolution(x, A, b, c, num_var, atol)
            return xnew
        end
        x = xnew
-       index_active = findall((b - A*x) .<  1e-8)
+       index_active = findall(b - A*x .<  1e-8)
        num_active = length(index_active)
     end
     return x
