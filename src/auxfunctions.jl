@@ -75,20 +75,19 @@ Refine solution when near the LP solution
 
 """
 function refinesolution(x, A, b, c, num_var, atol)
-    index_active = findall(b - A*x .<  1e-8)
+    index_active = findall((b - A*x) .<  1e-8)
     num_active = length(index_active)
     iter = 0
-    while num_active < num_var
+    if iszero(num_active)
+        alpha = ratiotest(x,A,b,-c)
+        x = x - alpha*c
+        index_active = findall((b - A*x).<= 1e-8)
+        num_active = length(index_active)
+    end
+    while num_active < num_var && iter <= num_var
        iter += 1
-       if iszero(num_active)
-           alpha = ratiotest(x,A,b,-c)
-           x = x - alpha*c
-           index_active = findall(b - A*x.<= 1e-8)
-           num_active = length(index_active)
-       end
-       aFact = lu(A[index_active,:]*A[index_active,:]')
-       lambda = aFact.L\(A[index_active,:]*c)
-       lambda = aFact.U\lambda
+       aFact = cholesky(A[index_active,:]*A[index_active,:]')
+       lambda = aFact\(A[index_gitactive,:]*c)
        d = -c +  A[index_active,:]'*lambda
        # if norm(d) ≈ 0
        #     break
@@ -99,7 +98,7 @@ function refinesolution(x, A, b, c, num_var, atol)
            return xnew
        end
        x = xnew
-       index_active = findall(b - A*x .<  1e-8)
+       index_active = findall((b - A*x) .<  1e-8)
        num_active = length(index_active)
     end
     return x
@@ -221,11 +220,11 @@ FindCircumcentermSet(X)
 Finds the Circumcenter of vectors ``x_0,x_1,…,x_m``, columns of matrix ``X``,
 as described in [^Behling2018a] and [^Behling2018b].
 
-[^Behling2018]: Behling, R., Bello Cruz, J.Y., Santos, L.-R.: 
-Circumcentering the Douglas–Rachford method. Numer. Algorithms. 78(3), 759–776 (2018). 
+[^Behling2018]: Behling, R., Bello Cruz, J.Y., Santos, L.-R.:
+Circumcentering the Douglas–Rachford method. Numer. Algorithms. 78(3), 759–776 (2018).
 [doi:10.1007/s11075-017-0399-5](https://doi.org/10.1007/s11075-017-0399-5)
-[^Behling2018]: Behling, R., Bello Cruz, J.Y., Santos, L.-R.: 
-On the linear convergence of the circumcentered-reflection method. Oper. Res. Lett. 46(2), 159-162 (2018). 
+[^Behling2018]: Behling, R., Bello Cruz, J.Y., Santos, L.-R.:
+On the linear convergence of the circumcentered-reflection method. Oper. Res. Lett. 46(2), 159-162 (2018).
 [doi:10.1016/j.orl.2017.11.018](https://doi.org/10.1016/j.orl.2017.11.018)
 
 """

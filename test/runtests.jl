@@ -1,4 +1,4 @@
-# using Circus
+using Circus
 using Test
 using LinearAlgebra
 using SparseArrays
