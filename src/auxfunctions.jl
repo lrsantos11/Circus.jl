@@ -87,7 +87,7 @@ function refinesolution(x, A, b, c, num_var, atol)
     while num_active < num_var && iter <= num_var
        iter += 1
        aFact = cholesky(A[index_active,:]*A[index_active,:]')
-       lambda = aFact\(A[index_gitactive,:]*c)
+       lambda = aFact\(A[index_active,:]*c)
        d = -c +  A[index_active,:]'*lambda
        # if norm(d) ≈ 0
        #     break
